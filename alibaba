@@ -1,1 +1,7 @@
 https://github.com/alibaba/Alibaba-Java-Coding-Guidelines/blob/master/README.md#5-security-specification
+
+
+工具类不允许有public或者default构造方法  (????)
+https://www.zhihu.com/question/266883899
+
+https://www.ibm.com/developerworks/cn/java/deconding-code-specification-part-1/index.html

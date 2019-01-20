@@ -42,4 +42,67 @@ public <T> T[] toArray(T[] a){
 }
 
 
-2. 
+2. equals和hashCode
+https://www.jianshu.com/p/5b7fe120bf94
+Integer.equals 跟 == :  equals 是比較值 , ==是比較地址
+
+public static void main(String[] args) {
+  Stu s1 = new Stu("A", 18);
+  Stu s2 = new Stu("B", 18);
+  System.out.println("stu:" + s1.equals(s2));
+
+  Integer i1 = new Integer(18);
+  Integer i2 = new Integer(18);
+  System.out.println("Integer:" + i1.equals(i2));
+
+  String str1 = "A";
+  String str2 = "B";
+  System.out.println("String:" + str1.equals(str2));
+}
+結果: 
+stu:false
+Integer:true
+String:true
+
+stu 繼承Object 原equals方法 未重寫
+public boolean equals(Object obj) {
+    return (this == obj);
+}
+
+Integer 重寫
+public boolean equals(Object obj) {
+    if (obj instanceof Integer) {
+        return value == ((Integer)obj).intValue();
+    }
+    return false;
+}
+String 重寫
+public boolean equals(Object anObject) {
+    if (this == anObject) {
+        return true;
+    }
+    if (anObject instanceof String) {
+        String anotherString = (String) anObject;
+        int n = value.length;
+        if (n == anotherString.value.length) {
+            char v1[] = value;
+            char v2[] = anotherString.value;
+            int i = 0;
+            while (n-- != 0) {
+                if (v1[i] != v2[i])
+                        return false;
+                i++;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+Set 的重複性檢驗，是先取hashCode找到對應的位址 (但該位置可能存在多個元素),判斷是否相等，接著再用equals方法比較
+
+
+
+3. 
+
+
+

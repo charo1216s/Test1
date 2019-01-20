@@ -8,24 +8,22 @@ https://www.ibm.com/developerworks/cn/java/deconding-code-specification-part-1/i
 
 
 集合處理
-1. 阿里强制规定使用集合转数组的方法，必须使用集合的 toArray(T[] arrays)，传入的是类型完全一样的数组，大小就是 list.size()。
-使用 toArray 带参方法，入参分配的数组空间不够大时，toArray 方法内部将重新分配内存空间，并返回新数组地址；
+1. 集合轉成Array時, 要使用集合的toArray(T[] arrays)方法，傳入型態一樣的Array 大小為list.size
+
+說明: 使用 toArray 带参方法，入参分配的数组空间不够大时，toArray 方法内部将重新分配内存空间，并返回新数组地址；
 如果数组元素大于实际所需，下标为[list.size()]的数组元素将被置为 null，其它数组元素保持原值，因此最好将方法入参数组大小定义与集合元素个数一致。
 
-List 轉成array 
-使用集合的toArray(傳入型態一樣的Array 大小為list.size)
-
-
-清单 25 正例
+正例:
 List<String> list = new ArrayList<String>(2);
 list.add("guan");
 list.add("bao");
 String[] array = new String[list.size()];
 array = list.toArray(array);
-反例：直接使用 toArray 暂时无参方法存在问题，以直接将集合转成 Object 数组进行返回，若强转其他类型数组将出现 ClassCastException 错误。
-
-我的理解
-ArrayList 类的 toArray()源码如清单所示，toArray()方法暂时无需传入参数，可以直接将集合转成 Object 数组进行返回，而且也只能返回 Object 类型。
+反例:
+String[] array = list.toArray(); 
+Error: ClassCastException 
+若直接使用 toArray() ，此方法會創建一个 Object Array 直接將list轉成 Object Array ，此時若將Object[]轉为 String[] 會出現 ClassCastException錯誤。
+Java 中的強制轉型只是針對單個對象，無法將一種型態的Array轉成为另一種Array
 
 清单 26 toArray()源码
 
@@ -42,41 +40,6 @@ public <T> T[] toArray(T[] a){
     if(a.length> a[size] = null;
     return a;
 }
-由源码可知，不带参数的 toArray()构造一个 Object 数组，然后进行数据拷贝，此时进行转型就会产生 ClassCastException。
-原因是不能将 Object[]转化为 Strng[]。Java 中的强制类型转换只是针对单个对象，想要将一种类型数组转化为另一种类型数组是不可行的。
 
-针对传入参数的数组大小，测试大于 list、等于 list 和小于 list 三种情况，测试代码如清单 27 所示。
 
-清单 27 toArray()测试
-
-public static void main(String[] args){
-    List<String> list = new ArrayList<String>();
-    for(int i=0;i<20;i++){
-        list.add("test");
-    }
-    long start = System.currentTimeMills();
-    for(int i=0;i<10000000;i++){
-        String[] array = new String[list.size()];
-        Array = list.toArray(array);
-    }
-    System.out.println("数组长度等于 list 耗时："+(System.currentTimeMills()-start)+"ms");
-    start = System.currentTimeMills();
-    for(int i=0;i<10000000;i++){
-        String[] array = new String[list.size()*2];
-        Array = list.toArray(array);
-    }
-     System.out.println("数组长度等于 list 耗时："+(System.currentTimeMills()-start)+"ms");
-     start = System.currentTimeMills();
-    for(int i=0;i<10000000;i++){
-        String[] array = new String[0];
-        Array = list.toArray(array);
-    }
-        System.out.println("数组长度等于 list 耗时："+(System.currentTimeMills()-start)+"ms");
-}
-清单运行后输出结果如清单 28 所示。
-
-清单 28 清单运行输出
-数组长度等于 list 耗时：431ms
-数组长度等于 list 耗时：509ms
-数组长度等于 list 耗时：1943ms
-通过测试可知无论数据大小如何，数组转换都可以成功，只是耗时不同，数组长度等于 list 时性能最优，因此强制方法入参数组大小与集合元素个数一致。
+2. 

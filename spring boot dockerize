@@ -1,0 +1,28 @@
+ docker pull  base  image  :  frolvlad/alpine-oraclejdk8  (Alpine Linux OS + oracle-jdk )
+ 
+ docker load -i alpine-oracle-jdk8.tar
+
+ 把 Project.jar 檔放到 與 Dockerfile 同個路徑底下 
+ 
+
+
+ Create Dockerfile 
+Dockerfile
+
+FROM frolvlad/alpine-oraclejdk8:slim
+VOLUME /tmp
+ADD Project.jar app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=uat","-jar","/app.jar"]
+EXPOSE 2340
+FROM 	base image: OS + Java 環境
+Volume 	掛載點
+ADD 	把專案的jar檔一起打包進來
+ENTRYPOINT 	執行jar 並設置profile環境參數 -Dspring.profiles.active=uat 運行store 
+EXPOSE 	port
+
+ 
+ build image  :  docker build -t  imageName . -f Dockerfile
+  
+ Run and Start container : docker run -p  2340:8081 -t  imageName
+ 
+ 服務啟動完成.  http://172.20.3.177:2340

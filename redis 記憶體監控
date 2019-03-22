@@ -1,0 +1,7 @@
+到redis主機 
+docker ps 查看啟用中的container
+找到redis 選一台 (master1)
+docker exec -it f954895e6a90 /bin/bash
+redis-cli -h 172.20.3.163 -p 6380
+auth 1qaz@ebookadm
+info memory

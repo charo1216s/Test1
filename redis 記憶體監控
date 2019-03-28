@@ -5,3 +5,14 @@ docker exec -it f954895e6a90 /bin/bash
 redis-cli -h 172.20.3.163 -p 6380
 auth 1qaz@ebookadm
 info memory
+
+
+
+redis-cli -c -p port -a  ‘password' info memory | grep -w 'used_memory_human\|used_memory_rss_human\|mem_fragmentation_ratio\|maxmemory_human\|total_system_memory_human'
+
+監控主要參數:
+used_memory_human
+used_memory_rss_human
+mem_fragmentation_ratio:  used_memory_rss/used_memory
+maxmemory_human
+total_system_memory_human

@@ -1,0 +1,100 @@
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+public class Test{
+    public static void main(String[] args) throws InterruptedException{
+        WebDriver driver = null;
+        System.setProperty("webdriver.chrome.driver", "D://chromedriver_win32//chromedriver.exe");
+        driver = new ChromeDriver(DesiredCapabilities.chrome());
+        String contentIdProd = "KIN01001000059";
+        String contentIdUat = "BUS01001000953";
+        Set<String> uatSet = new HashSet<>();
+        Set<String> prodSet = new HashSet<>();
+        
+        //UAT
+        driver.get("https://cms.mybookuat.taiwanmobile.com/myBook.cms/index.do");
+        driver.findElement(By.id("inputName")).sendKeys("uatpm");
+        driver.findElement(By.id("doStoreLogin_password")).sendKeys("7ujm7ujm");
+        driver.findElement(By.id("inputCode")).sendKeys(driver.findElement(By.id("checkCode")).getText());
+        driver.findElement(By.cssSelector("input[type='Submit'][value='Submit']")).click();
+        Thread.sleep(500);
+        
+        driver.get("https://cms.mybookuat.taiwanmobile.com/myBook.cms/editPdfPage.do?contentId="+contentIdUat+"");
+        Thread.sleep(500);
+//        WebElement e = driver.findElement(By.xpath("//button[@class='close']"));
+//        e.click();
+//        Thread.sleep(500);
+        WebElement el = driver.findElement(By.xpath("//div[@id='pageListTableBody']"));
+        Thread.sleep(1000);
+        List<WebElement> elements = el.findElements(By.cssSelector("button[type='button'][class='btn btn-primary btn-xs']"));
+        for(WebElement element :elements){
+           element.click();
+           String title = element.getText();
+           driver.switchTo().frame(0);
+           Thread.sleep(1500);
+           String text = driver.findElement(By.xpath("//body[@class='cke_editable cke_editable_themed cke_contents_ltr cke_show_borders']")).getText();
+           if(text.trim().equals("")){
+//               uatSet.add(title);
+               System.out.println("uat ="+title);
+           }
+           driver.switchTo().defaultContent();
+           Thread.sleep(1000);
+       }
+     
+        //Prodution
+         driver.get("https://cms.mybook.taiwanmobile.com/myBook.cms/index.do");
+         driver.findElement(By.id("inputName")).sendKeys("alex1wu");
+         driver.findElement(By.id("doStoreLogin_password")).sendKeys("09560956Ja");
+         driver.findElement(By.id("inputCode")).sendKeys(driver.findElement(By.id("checkCode")).getText());
+         Thread.sleep(500);
+         driver.findElement(By.cssSelector("input[type='Submit'][value='Submit']")).click();
+         Thread.sleep(500);
+         driver.get("https://cms.mybook.taiwanmobile.com/myBook.cms/editPdfPage.do?contentId="+contentIdProd+"");
+         Thread.sleep(500);
+         WebElement ep = driver.findElement(By.xpath("//button[@class='close']"));
+         ep.click();
+         Thread.sleep(500);
+         WebElement elProd = driver.findElement(By.xpath("//div[@id='pageListTableBody']"));
+         Thread.sleep(1000);
+         List<WebElement> elementsProd = elProd.findElements(By.cssSelector("button[type='button'][class='btn btn-primary btn-xs']"));
+         for(WebElement elementProd :elementsProd){
+            elementProd.click();
+            String title = elementProd.getText();
+            driver.switchTo().frame(0);
+            Thread.sleep(1500);
+            String text = driver.findElement(By.xpath("//body[@class='cke_editable cke_editable_themed cke_contents_ltr cke_show_borders']")).getText();
+            if(text.trim().equals("")){
+//                prodSet.add(title);
+                System.out.println("prod ="+title);
+            }
+            driver.switchTo().defaultContent();
+            Thread.sleep(1000);
+        }
+         
+//         //Set find different
+//         Iterator<String> itProd = prodSet.iterator();
+//         Iterator<String> itUat = prodSet.iterator();
+//         while(itUat.hasNext()){
+//            int count = 0;
+//            String pageUat = itUat.next();
+//            while(itProd.hasNext()){
+//                String pageProd = itProd.next();
+//                if(pageUat.equals(pageProd)){
+//                    count++;
+//                }
+//            }
+//            if(count == 0){
+//                System.out.println(pageUat);
+//            }
+//         }
+    }
+    
+}

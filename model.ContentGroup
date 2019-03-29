@@ -1,0 +1,23 @@
+package com.solrsync.model;
+
+public class ContentGroup {
+	private String contentName;
+	private String contentGroupId;
+
+	public String getContentName() {
+		return contentName;
+	}
+
+	public void setContentName(String contentName) {
+		this.contentName = contentName;
+	}
+
+	public String getContentGroupId() {
+		return contentGroupId;
+	}
+
+	public void setContentGroupId(String contentGroupId) {
+		this.contentGroupId = contentGroupId;
+	}
+
+}

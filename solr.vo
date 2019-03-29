@@ -1,0 +1,22 @@
+package com.solrsync.vo;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class WordSet {
+	private Set<String> ComprehensiveSet = new HashSet<>();
+	private Set<String> dictSet = new HashSet<>();
+	
+	public Set<String> getComprehensiveSet() {
+		return ComprehensiveSet;
+	}
+	public void setComprehensiveSet(Set<String> comprehensiveSet) {
+		ComprehensiveSet = comprehensiveSet;
+	}
+	public Set<String> getDictSet() {
+		return dictSet;
+	}
+	public void setDictSet(Set<String> dictSet) {
+		this.dictSet = dictSet;
+	}
+}

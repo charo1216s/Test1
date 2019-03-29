@@ -1,0 +1,38 @@
+package com.solrsync.service;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+
+import com.solrsync.vo.WordSet;
+
+public class Writer {
+	private static Logger logger = Logger.getLogger(Writer.class);
+
+	public void writeDictionary(WordSet wordSet) throws IOException, URISyntaxException {
+		FileOutputStream out = null;
+		OutputStreamWriter wri = null;
+		try {
+			out = new FileOutputStream("dict.txt",true);
+			wri = new OutputStreamWriter(out);
+			//寫入詞庫
+			Iterator<String> iterator = wordSet.getComprehensiveSet().iterator();
+			while (iterator.hasNext()) {
+				String word = iterator.next();
+				wri.write("\n");
+				wri.write(word.trim().replace(" ", "")+" 1000 n");
+			}
+			logger.debug("成功寫入");
+			wri.flush();
+			wri.close();
+			out.close();
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
+		}
+	}
+
+}

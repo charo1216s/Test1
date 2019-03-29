@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.solrsync.model">
+	<class name="ContentProfile" table="CMS_CONTENT_PROFILE">
+		<id name="contentId" column="CONTENT_ID" type="string">
+		</id>
+		<property name="publisher" column="PUBLISHER" type="string" />
+		<property name="authorName" column="AUTHOR_NAME" type="string" />
+	</class>
+		<class name="ContentGroup" table="CMS_CONTENT_GROUP">
+		<id name="contentGroupId" column="CONTENT_GROUP_ID" type="string">
+		</id>
+		<property name="contentName" column="CONTENT_NAME" type="string" />
+	</class>
+</hibernate-mapping>
+

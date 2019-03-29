@@ -1,0 +1,29 @@
+package com.solrsync.service;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+public class KeyWordReader {
+	private static Logger logger = Logger.getLogger(KeyWordReader.class);
+	public Set<String> readKeyWord() {
+		Set<String> keyWordSet = new HashSet<>();
+		try {
+			FileReader fileReader = new FileReader("keyword.txt");
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			while (bufferedReader.ready()) {
+				String keyWord = bufferedReader.readLine();
+				// 熱門關鍵字
+				keyWordSet.add(keyWord.trim());
+			}
+			fileReader.close();
+			bufferedReader.close();
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+		}
+		return keyWordSet;
+	}
+}

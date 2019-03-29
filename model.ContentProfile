@@ -1,0 +1,30 @@
+package com.solrsync.model;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ContentProfile {
+	private String contentId;
+	private String publisher;
+	private String authorName;
+	public String getContentId() {
+		return contentId;
+	}
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
+	}
+	public String getPublisher() {
+		return publisher;
+	}
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
+	}
+	public String getAuthorName() {
+		return authorName;
+	}
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+	
+
+}

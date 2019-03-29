@@ -1,0 +1,41 @@
+package com.solrsync;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import com.solrsync.service.ContentQuery;
+import com.solrsync.service.KeyWordReader;
+import com.solrsync.service.Reader;
+import com.solrsync.service.Writer;
+import com.solrsync.vo.WordSet;
+
+public class Application {
+	private static Logger logger = Logger.getLogger(Application.class);
+
+	public static void main(String[] args) throws IOException, URISyntaxException, NoSuchAlgorithmException {
+		
+		//profile(publisher,authorName) , contentGroup(contentName)
+		ContentQuery contentQuery = new ContentQuery();
+		Set<String> queryContentSet = contentQuery.getContent();
+		
+		//讀熱門關鍵字
+		KeyWordReader keyWordReader =new KeyWordReader();
+		Set<String> keyWordSet = keyWordReader.readKeyWord();
+		
+		//讀取詞庫 (將詞庫的詞與DB的出版社,作者名,刊物群組名稱,熱門關鍵字 放到同個set)
+		Reader fileReader = new Reader();
+		WordSet wordSet= fileReader.readDictionary(queryContentSet,keyWordSet);
+		
+		//取出要寫入詞庫的部分
+		wordSet.getComprehensiveSet().removeAll(wordSet.getDictSet());
+		logger.debug("此次欲新增的字詞數量為 :  "+wordSet.getComprehensiveSet().size());
+		
+		//寫入詞庫
+		Writer fileWriter = new Writer();
+		fileWriter.writeDictionary(wordSet);
+	}	
+}	

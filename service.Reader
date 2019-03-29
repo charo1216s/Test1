@@ -1,0 +1,40 @@
+package com.solrsync.service;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import com.solrsync.vo.WordSet;
+
+public class Reader {
+	private static Logger logger = Logger.getLogger(Reader.class);
+	public WordSet readDictionary(Set<String> queryContentSet, Set<String> keyWordSet) {
+		WordSet wordSet = new WordSet();
+		Set<String> dictSet = new HashSet<>();
+		try {
+			FileReader fileReader = new FileReader("dict.txt");
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			while (bufferedReader.ready()) {
+				String dictWord = bufferedReader.readLine();
+				//不取詞頻與詞性, 只取詞的部分, 以空白格的位置來判斷.
+				int index = dictWord.indexOf(" ");
+				if (index > 0) {
+					//dict的字詞內容
+					dictSet.add(dictWord.substring(0, index));
+					// queryContentSet(作者名與出版社) 加入 dict.txt裡的內容 = comprehensiveSet
+					queryContentSet.add(dictWord.substring(0, index));
+				}
+			}
+			fileReader.close();
+			bufferedReader.close();
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+		}
+		//加入熱門關鍵字
+		queryContentSet.addAll(keyWordSet);
+		wordSet.setDictSet(dictSet);;
+		wordSet.setComprehensiveSet(queryContentSet);;
+		return wordSet;
+	}
+}

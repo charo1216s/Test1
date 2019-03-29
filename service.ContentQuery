@@ -1,0 +1,133 @@
+package com.solrsync.service;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+
+import com.solrsync.util.EncryptUtil;
+
+public class ContentQuery {
+	private static Logger logger = Logger.getLogger(ContentQuery.class);
+
+	public Set<String> getContent() throws NoSuchAlgorithmException {
+		Session session = null;
+		Set<String> queryContentSet = new HashSet<>();
+		Map<String, String> map = new HashMap<String, String>();
+		Configuration configuration = new Configuration();
+		
+		EncryptUtil encryptUtil = new EncryptUtil();
+		map = encryptUtil.encrypt();
+		configuration.configure("hibernate.cfg.xml");
+		configuration.setProperty("hibernate.connection.username", map.get("username"));
+		configuration.setProperty("hibernate.connection.password", map.get("password"));
+
+		ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties())
+				.buildServiceRegistry();
+		SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+		session = sessionFactory.openSession();
+
+		// publsher and authorName
+		queryContent(session, queryContentSet, "publisher", "ContentProfile");
+		queryContent(session, queryContentSet, "authorName", "ContentProfile");
+		queryContent(session, queryContentSet, "contentName", "ContentGroup");
+		logger.debug("queryContentSet size = " + queryContentSet.size());
+		session.close();
+		return queryContentSet;
+	}
+
+	private void queryContent(Session session, Set<String> queryContentSet, String column, String tableName) {
+		String hql = "Select DISTINCT " + column + " from " + tableName + "  where " + column + " not like '%編%' AND "
+				+ column + " not like '%校閱%' " + "AND " + column + " not like '%作者%' AND " + column
+				+ " not like '%著%' AND " + column + " not like '%圖%' AND " + column + " not like '%譯%'" + "AND "
+				+ column + " not like '%撰稿%' AND " + column + " not like '%述%' AND " + column + " not like '%寫%' AND "
+				+ column + " not like '%執筆%'" + "AND " + column + " not like '%測試%' AND " + column
+				+ " not like '%TEST%' AND " + column + " not like '%Test%' AND " + column + " not like '%test%' AND "
+				+ column + " not like '%繪%' AND " + column + " not like '%團法人%' AND " + column
+				+ " not like '%今周文化事業%' AND " + column + " not like '%等%' AND " + column + " not like '%專文%' AND "
+				+ column + " not like '%有目錄%' AND " + column + " not like '%策畫%' AND " + column + " is not null";
+		Query query = session.createQuery(hql);
+		List list = query.list();
+		Iterator<String> it = list.iterator();
+		while (it.hasNext()) {
+			String word = it.next().trim();
+			queryContentSet = reorganizationWords(word, queryContentSet);
+		}
+	}
+
+	public Set<String> reorganizationWords(String word, Set<String> queryContentSet) {
+		String[] splitChar = { ".", "﹐", ",", "，", "、", "(", "（", "-", "；", "/", ";" };
+		int times = 0;
+		// 判斷字詞是否包含以下可分割字元
+		for (String sc : splitChar) {
+			if (word.contains(sc)) {
+				times++;
+			}
+		}
+		if (times > 0) {
+			splitWord(word, queryContentSet);
+		} else {
+			word = filterSpecialChar(word);
+			if (word != null && word.length() > 1 && word.length() < 7 && checkNumberString(word)) {
+				queryContentSet.add(word.trim());
+			}
+		}
+		return queryContentSet;
+	}
+
+	public Set<String> splitWord(String word, Set<String> queryContentSet) {
+		// 1. 將某些特殊字元 改成 可以分割的字元
+		word = word.replace("(", ",").replace(")", "").replace("、", ",").replace("（", ",").replace("）", "")
+				.replace("-", ",").replace("；", ",").replace("/", ",").replace(";", ",").replace("﹐", ",")
+				.replace("，", ",").replace(".", ",");
+		// 2. 判斷 有沒有, 、 或（） 處理後 分割成各字詞
+		String[] words = word.split(",");
+		for (String w : words) {
+			// 3. 過濾特殊字元
+			word = filterSpecialChar(w);
+			if (word != null && word.length() > 1 && word.length() < 7 && checkNumberString(word)) {
+				queryContentSet.add(word.replace(" ", "").trim());
+			}
+		}
+		return queryContentSet;
+	}
+
+	public String filterSpecialChar(String word) {
+		// 半形 全形空白格去掉
+		word = word.replaceAll("　", "").replace(" ", "");
+		String regEx = "[` A·˙‧「」\"\"・《》/:◎＆／•．.//~!@#$%^&*()+=|{}':;',\\[\\]<>/?~！@#� \uE009\uF8F5￥%……& amp;*（）——+|{}【】‘；：”“’。，、？]";
+		Pattern pattern = Pattern.compile(regEx);
+		Matcher matcher = pattern.matcher(word);
+		if (matcher.find()) {
+			word = matcher.replaceAll("").trim();
+		}
+		return word;
+	}
+
+	public boolean checkNumberString(String word) {
+		boolean isNumberString = true;
+		// String regEx = "^[-+]?\\d+$";
+		String regEx = "[A-Za-z0-9]";
+		Pattern pattern = Pattern.compile(regEx);
+		Matcher matcher = pattern.matcher(word);
+		if (matcher.find()) {
+			isNumberString = false;
+		}
+		return isNumberString;
+	}
+
+}

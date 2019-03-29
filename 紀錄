@@ -5,9 +5,19 @@ docker -redis
 confluence KM 存放文件, 紀錄跟教學 知識管理平台
 
 
+把model的部分 讀一個Project 然後 用gradle buildJar 包進myBookStore或myBookStoreAdmin使用　CMS跟NCMS也是　
+
 擔任全端工程師，負責專案前後端開發與維護
 
 MyBookStore書城開發與維護
 CMS 上書與書籍管理後台 開發與維護
 後台管理系統 開發與維護
-App 介接API開發與維護
+API開發與維護
+
+Spring boot, Spring MVC / gradle, maven/ Vue, React, Angular/ JSP/ tomcat/ Jenkins 
+常用工具: 
+putty
+FileZilla 
+JD-GUI
+SourceTree
+NotePad++
